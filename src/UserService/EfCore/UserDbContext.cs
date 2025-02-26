@@ -3,22 +3,22 @@ using UserService.Models;
 
 namespace UserService.EfCore;
 
-public class AppDbContext : DbContext
+public class UserDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
     {
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.HasDefaultSchema("ProductService");
 
         // Optional: Configure entity relationships or constraints here
         modelBuilder.Entity<User>().HasKey(u => u.Id);
         modelBuilder.Entity<User>().Property(u => u.Name).IsRequired();
         modelBuilder.Entity<User>().Property(u => u.Email).IsRequired();
-        modelBuilder.Entity<User>().Property(u => u.Role).HasDefaultValue("Buyer");
     }
 }

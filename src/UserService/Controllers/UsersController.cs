@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UserService.EfCore;
+using UserService.MediatR.Requests;
 using UserService.Models;
 
 namespace UserService.Controllers;
@@ -9,25 +10,29 @@ namespace UserService.Controllers;
 [Route("api/users")]
 public class UsersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly UserDbContext _context;
     private readonly IMediator _mediator;
 
-    public UsersController(AppDbContext context, IMediator mediator)
+    public UsersController(UserDbContext context, IMediator mediator)
     {
         _context = context;
         _mediator = mediator;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<ActionResult<User>> GetUser(Guid id)
     {
-        return Ok(new User());
+        var command = new GetUserByIdRequest(id);
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> CreateUser(User user)
+    public async Task<ActionResult<User>> CreateUser([FromBody]User? user)
     {
-        return Ok(new User());
+        var command = new CreateUserRequest(user!);
+         var result = await _mediator.Send(command);
+        return Ok(result);
 
     }
 }
